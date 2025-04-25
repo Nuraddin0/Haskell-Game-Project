@@ -53,8 +53,12 @@ startGame board maxMoves currentMoves firstTurn lastTurn posOfA posOfB posOfC po
 
             printBoard newBoard
             putStrLn ("Completed moves: " ++ show moveCount)
+            
 
-            let isGameEnded = checkWinCondition newBoard maxMoves moveCount posOfA posOfB posOfC posOfZ
+            let isGameEnded = if letter == "A" then checkWinCondition newBoard maxMoves moveCount cell posOfB posOfC posOfZ
+                    else if letter == "B" then checkWinCondition newBoard maxMoves moveCount posOfA cell posOfC posOfZ
+                    else if letter == "C" then checkWinCondition newBoard maxMoves moveCount posOfA posOfB cell posOfZ
+                    else checkWinCondition newBoard maxMoves moveCount posOfA posOfB posOfC posOfZ 
 
             if isGameEnded == 0 then putStrLn "DRAW!"
             else if isGameEnded == 1 then putStrLn "A&B&C WIN!"
@@ -97,7 +101,7 @@ checkWinCondition board maxMoves moveCount posOfA posOfB posOfC posOfZ = do
     -- return 0 for DRAW, 1 for firstSideWins, 2 for lastSideWins, 3 for game is not ended
     if (maxMoves == moveCount) then 0 --Draw
     else if ( (posOfZ `mod` 5) < (posOfA `mod` 5) && (posOfZ `mod` 5) < (posOfB `mod` 5) && (posOfZ `mod` 5) < (posOfC `mod` 5)) then 2 --Z wins
-    else if not (any (\cell -> isValidLast board cell posOfZ) [posOfZ+1, posOfZ-1, posOfZ+5, posOfZ-5, posOfZ+6, posOfZ-6, posOfZ+4, posOfZ-4]) then 1 -- A, B, C win
+    else if (posOfZ == 5 && not (any (\cell -> isValidLast board cell posOfZ) [posOfZ+1, posOfZ-4, posOfZ+6])) || (posOfZ == 9 && not (any (\cell -> isValidLast board cell posOfZ) [posOfZ-1, posOfZ+4, posOfZ-6])) || (not (any (\cell -> isValidLast board cell posOfZ) [posOfZ+1, posOfZ-1, posOfZ+5, posOfZ-5, posOfZ+6, posOfZ-6, posOfZ+4, posOfZ-4])) then 1 -- A, B, C win
     else 3 --Game is not ended
 
 
@@ -114,19 +118,19 @@ printBoard xs = do
 
 isValidLast :: [Char] -> Int -> Int -> Bool
 isValidLast board cell pos
+    | cell<0 || cell>14 = False
     | (board !! cell) `elem` ['X', 'A', 'B', 'C', 'Z'] = False
     | (1 <= pos && pos <= 3 && cell `elem` [pos+1, pos-1, pos+5, pos+6, pos+4]) = True
-    | (5 <= pos && pos <= 9 && cell `elem` [pos+1, pos-1, pos+5, pos+6, pos+4, pos-5, pos-4, pos-6]) = True
+    | (pos == 5 && cell `elem` [pos+1,pos-4,pos+6]) || (pos == 9 && cell `elem` [pos-6,pos-1,pos+4]) || (5 < pos && pos < 9 && cell `elem` [pos+1, pos-1, pos+5, pos+6, pos+4, pos-5, pos-4, pos-6]) = True
     | (11 <= pos && pos <= 13 && cell `elem` [pos+1, pos-1, pos-5, pos-4, pos-6]) = True
     | otherwise = False
 
-
-
 isValidFirst :: [Char] -> Int -> Int -> Bool
 isValidFirst board cell pos
+    | cell<0 || cell>14 = False
     | (board !! cell) `elem` ['X', 'A', 'B', 'C', 'Z'] = False
     | (1 <= pos && pos <= 3 && cell `elem` [pos+1, pos+5, pos+6]) = True
-    | (5 <= pos && pos <= 9 && cell `elem` [pos-5, pos-4, pos+1, pos+5, pos+6]) = True
+    | (pos == 5 && cell `elem` [pos+1,pos-4,pos+6]) || (5 < pos && pos < 9 && cell `elem` [pos-5, pos-4, pos+1, pos+5, pos+6]) = True
     | (11 <= pos && pos <= 13 && cell `elem` [pos+1, pos-5, pos-4]) = True
     | otherwise = False
 
