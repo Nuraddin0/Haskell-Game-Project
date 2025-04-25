@@ -1,10 +1,3 @@
-{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
-{-# HLINT ignore "Use when" #-}
-{-# HLINT ignore "Use zipWith" #-}
-{-# HLINT ignore "Use guards" #-}
-{-# HLINT ignore "Redundant if" #-}
-{-# HLINT ignore "Redundant bracket" #-}
-
 gameBoard = ['X','A','-','-','X',
             'B','-','-','-','Z',
             'X','C','-','-','X']
