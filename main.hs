@@ -94,7 +94,7 @@ checkWinCondition board maxMoves moveCount posOfA posOfB posOfC posOfZ = do
     -- return 0 for DRAW, 1 for firstSideWins, 2 for lastSideWins, 3 for game is not ended
     if (maxMoves == moveCount) then 0 --Draw
     else if ( (posOfZ `mod` 5) < (posOfA `mod` 5) && (posOfZ `mod` 5) < (posOfB `mod` 5) && (posOfZ `mod` 5) < (posOfC `mod` 5)) then 2 --Z wins
-    else if (posOfZ == 5 && not (any (\cell -> isValidLast board cell posOfZ) [posOfZ+1, posOfZ-4, posOfZ+6])) || (posOfZ == 9 && not (any (\cell -> isValidLast board cell posOfZ) [posOfZ-1, posOfZ+4, posOfZ-6])) || (not (any (\cell -> isValidLast board cell posOfZ) [posOfZ+1, posOfZ-1, posOfZ+5, posOfZ-5, posOfZ+6, posOfZ-6, posOfZ+4, posOfZ-4])) then 1 -- A, B, C win
+    else if (posOfZ == 9 && not (any (\cell -> isValidLast board cell posOfZ) [posOfZ-1, posOfZ+4, posOfZ-6])) || (not (any (\cell -> isValidLast board cell posOfZ) [posOfZ+1, posOfZ-1, posOfZ+5, posOfZ-5, posOfZ+6, posOfZ-6, posOfZ+4, posOfZ-4])) then 1 -- A, B, C win
     else 3 --Game is not ended
 
 
