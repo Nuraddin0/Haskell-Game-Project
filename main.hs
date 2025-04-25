@@ -112,9 +112,9 @@ updateBoard board cell pos =
 
 printBoard :: [Char] -> IO()
 printBoard [] = return ()
-printBoard xs = do
-    putStrLn (take 5 xs)
-    printBoard (drop 5 xs)
+printBoard row = do
+    putStrLn (take 5 row)
+    printBoard (drop 5 row)
 
 isValidLast :: [Char] -> Int -> Int -> Bool
 isValidLast board cell pos
