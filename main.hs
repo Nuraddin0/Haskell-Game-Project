@@ -1,4 +1,5 @@
 import Text.Read (readMaybe)
+import System.Exit (exitSuccess)
 
 gameBoard = ['X','A','-','-','X',
             'B','-','-','-','Z',
@@ -6,7 +7,7 @@ gameBoard = ['X','A','-','-','X',
 
 main :: IO()
 main = do
-    putStrLn "Welcome!"
+    putStrLn "Welcome! The game is starting...Type 'quit' anytime for quitting from the game."
     printBoard gameBoard
 
     putStrLn "Enter the maximum number of total moves allowed:"
@@ -94,6 +95,9 @@ askForMaxMoves = do
     if input == "" then do
         putStrLn "Input can not be empty! Enter the maximum number of total moves allowed:"
         askForMaxMoves
+    else if input == "quit" then do
+        putStrLn "The games is ending..."
+        exitSuccess
     else do
         case readMaybe input :: Maybe Int of
             Nothing -> do
@@ -108,6 +112,9 @@ askForFirstsMove = do
     if input == "" then do
         putStrLn "Input can not be empty! Please select one of first three letters and a cell to move it (e.g., A 6)"
         askForFirstsMove
+    else if input == "quit" then do
+        putStrLn "The games is ending..."
+        exitSuccess
     else do
         let [letter, pos] = words input
         if letter `elem` ["A","B","C"] then do
@@ -126,6 +133,9 @@ askForLastMove = do
     if input == "" then do
         putStrLn "Input can not be empty! Please select a cell for the Z:"
         askForLastMove
+    else if input == "quit" then do
+        putStrLn "The games is ending..."
+        exitSuccess
     else
         case readMaybe input :: Maybe Int of
             Nothing -> do
@@ -178,6 +188,9 @@ askWhichToStart = do
     if input == "" then do
         putStrLn "Input can not be empty! Who starts first? Type 'last' or 'firsts':"
         askWhichToStart
+    else if input == "quit" then do
+        putStrLn "The games is ending..."
+        exitSuccess
     else if input /= "firsts" && input /= "last" then do
         putStrLn "Invalid input! Who starts first? Type 'last' or 'firsts':"
         askWhichToStart
