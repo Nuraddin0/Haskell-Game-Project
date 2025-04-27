@@ -1,9 +1,4 @@
-{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
-{-# HLINT ignore "Use when" #-}
-{-# HLINT ignore "Use zipWith" #-}
-{-# HLINT ignore "Use guards" #-}
-{-# HLINT ignore "Redundant if" #-}
-{-# HLINT ignore "Redundant bracket" #-}
+import Text.Read (readMaybe)
 
 gameBoard = ['X','A','-','-','X',
             'B','-','-','-','Z',
@@ -24,7 +19,7 @@ main = do
 
     putStrLn "Who starts first? Type 'last' or 'firsts':"
     startingSide <- askWhichToStart
-    print startingSide
+    
     let firstTurn = startingSide == "firsts"
         lastTurn = startingSide == "last"
 
@@ -33,15 +28,15 @@ main = do
 startGame :: [Char] -> Int -> Int -> Bool -> Bool -> Int -> Int -> Int -> Int -> IO()
 startGame board maxMoves currentMoves firstTurn lastTurn posOfA posOfB posOfC posOfZ = do
     if firstTurn then do
+
         putStrLn "Please select one of first three letters and a cell to move it (e.g., A 6)"
-        input <- getLine
-        let [letter, pos] = words input
-            cell = read pos :: Int
-            isValidMove =
+        (letter, cell) <- askForFirstsMove
+
+        let isValidMove =
                 if letter == "A" then isValidFirst board cell posOfA
                 else if letter == "B" then isValidFirst board cell posOfB
                 else if letter == "C" then isValidFirst board cell posOfC
-                else False
+                else False --never executes
 
         if isValidMove then do
             let newBoard =
@@ -74,9 +69,9 @@ startGame board maxMoves currentMoves firstTurn lastTurn posOfA posOfB posOfC po
 
     else do
         putStrLn "Please select a cell for the Z:"
-        input <- getLine
-        let cell = read input :: Int
-            isValidMove = isValidLast board cell posOfZ
+        cell <- askForLastMove
+        
+        let isValidMove = isValidLast board cell posOfZ
         if isValidMove then do
             let newBoard = updateBoard board cell posOfZ
                 moveCount = currentMoves + 1
@@ -95,13 +90,38 @@ startGame board maxMoves currentMoves firstTurn lastTurn posOfA posOfB posOfC po
             startGame board maxMoves currentMoves True False posOfA posOfB posOfC posOfZ
 
 
-checkWinCondition :: [Char] -> Int -> Int -> Int -> Int -> Int -> Int -> Int
+askForFirstsMove :: IO (String, Int)
+askForFirstsMove = do
+    input <- getLine
+    let [letter, pos] = words input
+    
+    if (letter `elem` ["A","B","C"]) then do
+        case readMaybe pos :: Maybe Int of
+            Nothing -> do
+                putStrLn ("Invalid input! Please select one of first three letters and a cell to move it (e.g., A 6)")
+                askForFirstsMove
+            Just cell -> return (letter, cell)
+    else do
+        putStrLn ("Invalid input! Please select one of first three letters and a cell to move it (e.g., A 6)")
+        askForFirstsMove
 
+askForLastMove :: IO Int
+askForLastMove = do
+    input <- getLine
+    case readMaybe input :: Maybe Int of
+        Nothing -> do
+            putStrLn ("Invalid input! Please select a cell for the Z:")
+            askForLastMove
+        Just cell -> return cell
+
+
+
+checkWinCondition :: [Char] -> Int -> Int -> Int -> Int -> Int -> Int -> Int
 checkWinCondition board maxMoves moveCount posOfA posOfB posOfC posOfZ = do
     -- return 0 for DRAW, 1 for firstSideWins, 2 for lastSideWins, 3 for game is not ended
-    if (maxMoves == moveCount) then 0 --Draw
-    else if ( (posOfZ `mod` 5) < (posOfA `mod` 5) && (posOfZ `mod` 5) < (posOfB `mod` 5) && (posOfZ `mod` 5) < (posOfC `mod` 5)) then 2 --Z wins
-    else if (posOfZ == 5 && not (any (\cell -> isValidLast board cell posOfZ) [posOfZ+1, posOfZ-4, posOfZ+6])) || (posOfZ == 9 && not (any (\cell -> isValidLast board cell posOfZ) [posOfZ-1, posOfZ+4, posOfZ-6])) || (not (any (\cell -> isValidLast board cell posOfZ) [posOfZ+1, posOfZ-1, posOfZ+5, posOfZ-5, posOfZ+6, posOfZ-6, posOfZ+4, posOfZ-4])) then 1 -- A, B, C win
+    if ( (posOfZ `mod` 5) < (posOfA `mod` 5) && (posOfZ `mod` 5) < (posOfB `mod` 5) && (posOfZ `mod` 5) < (posOfC `mod` 5)) then 2 --Z wins
+    else if (not (any (\cell -> isValidLast board cell posOfZ) [posOfZ+1, posOfZ-1, posOfZ+5, posOfZ-5, posOfZ+6, posOfZ-6, posOfZ+4, posOfZ-4])) then 1
+    else if (maxMoves == moveCount) then 0 --Draw
     else 3 --Game is not ended
 
 
@@ -112,9 +132,9 @@ updateBoard board cell pos =
 
 printBoard :: [Char] -> IO()
 printBoard [] = return ()
-printBoard xs = do
-    putStrLn (take 5 xs)
-    printBoard (drop 5 xs)
+printBoard row = do
+    putStrLn (take 5 row)
+    printBoard (drop 5 row)
 
 isValidLast :: [Char] -> Int -> Int -> Bool
 isValidLast board cell pos
