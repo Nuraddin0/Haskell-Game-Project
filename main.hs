@@ -134,7 +134,7 @@ askForLastMove = do
         putStrLn "Input can not be empty! Please select a cell for the Z:"
         askForLastMove
     else if input == "quit" then do
-        putStrLn "The games is ending..."
+        putStrLn "The game is ending..."
         exitSuccess
     else
         case readMaybe input :: Maybe Int of
