@@ -96,7 +96,7 @@ askForMaxMoves = do
         putStrLn "Input can not be empty! Enter the maximum number of total moves allowed:"
         askForMaxMoves
     else if input == "quit" then do
-        putStrLn "The games is ending..."
+        putStrLn "The game is ending..."
         exitSuccess
     else do
         case readMaybe input :: Maybe Int of
@@ -113,7 +113,7 @@ askForFirstsMove = do
         putStrLn "Input can not be empty! Please select one of first three letters and a cell to move it (e.g., A 6)"
         askForFirstsMove
     else if input == "quit" then do
-        putStrLn "The games is ending..."
+        putStrLn "The game is ending..."
         exitSuccess
     else do
         let [letter, pos] = words input
@@ -189,7 +189,7 @@ askWhichToStart = do
         putStrLn "Input can not be empty! Who starts first? Type 'last' or 'firsts':"
         askWhichToStart
     else if input == "quit" then do
-        putStrLn "The games is ending..."
+        putStrLn "The game is ending..."
         exitSuccess
     else if input /= "firsts" && input /= "last" then do
         putStrLn "Invalid input! Who starts first? Type 'last' or 'firsts':"
